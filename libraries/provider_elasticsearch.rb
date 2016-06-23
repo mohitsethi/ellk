@@ -27,6 +27,12 @@ class Chef
           notifies :restart, "runit_service[#{service_name}]", :delayed
         end
 
+        directory new_resource.datadir do
+          owner new_resource.user
+          group new_resource.group
+          recursive true
+        end
+
         template "#{home_dir}/config/logging.yml" do
           source 'elasticsearch/logging.yml.erb'
           owner new_resource.user
@@ -46,7 +52,10 @@ class Chef
           mode '0644'
           cookbook new_resource.source
           variables options: {
-            'datadir' => new_resource.datadir
+            'cluster_name' => new_resource.name,
+            'datadir' => new_resource.datadir,
+            'enable_discovery' => new_resource.enable_discovery,
+            'cluster_nodes' => new_resource.nodes
           }.merge(new_resource.conf_options)
           notifies :restart, "runit_service[#{service_name}]", :delayed
         end
@@ -59,7 +68,7 @@ class Chef
           'ES_GC_LOG_FILE' => '/var/log/elasticsearch/gc.log',
           'ES_GROUP' => new_resource.group,
           'ES_HEAP_NEWSIZE' => '',
-          'ES_HEAP_SIZE' => '2g',
+          'ES_HEAP_SIZE' => '8g',
           'ES_HOME' => home_dir,
           'ES_JAVA_OPTS' => '',
           'ES_RESTART_ON_UPGRADE' => 'true',

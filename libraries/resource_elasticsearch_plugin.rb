@@ -14,6 +14,9 @@ class Chef
       attribute :name, kind_of: String
       attribute :path, kind_of: String, default: '/opt/elasticsearch'
       attribute :version, kind_of: String, default: '1.7.0'
+      attribute :user, kind_of: String, default: 'elasticsearch'
+      attribute :group, kind_of: String, default: 'elasticsearch'
+
     end
   end
 end

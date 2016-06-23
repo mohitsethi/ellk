@@ -23,6 +23,8 @@ class Chef
 
       attribute :datadir, kind_of: String, default: '/opt/esdatadir'
       attribute :conf_options, kind_of: Hash, default: {}
+      attribute :enable_discovery, kind_of: [TrueClass, FalseClass], default: false
+      attribute :nodes, kind_of: String, default: ""
 
       # RUNIT
       attribute :runit_args, kind_of: Hash, default: {}
