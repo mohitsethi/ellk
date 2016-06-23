@@ -1,8 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'berkshelf'
-gem 'foodcritic'
-gem 'kitchen-rackspace'
-gem 'rubocop'
-gem 'test-kitchen'
-gem 'thor'
+group :lint do
+  gem 'foodcritic'
+  gem 'foodcritic-rackspace-rules'
+  gem 'rubocop'
+end
