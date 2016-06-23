@@ -41,6 +41,15 @@ filter {
       }
   }
 
+  if [type] == "nginx-access" {
+      grok {
+        patterns_dir => ["./config/patterns"]
+        match => ["message", "%{NGINXACCESS}" ]
+      }
+      date {
+        match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z", "dd/MMM/yyyy:HH:mm:ss" ]
+      }
+  }
 }
 
 

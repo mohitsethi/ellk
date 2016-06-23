@@ -11,11 +11,11 @@ when 'debian'
   packages << 'openjdk-7-jre-headless'
 when 'rhel'
   include_recipe 'yum'
-  packages << if node[:platform_version].to_i == 5
-                'java-1.7.0-openjdk'
-              else
-                'java-1.8.0-openjdk-headless'
-              end
+  if node[:platform_version].to_i == 5
+    packages << 'java-1.7.0-openjdk'
+  else
+    packages << 'java-1.8.0-openjdk-headless'
+  end
 end
 
 packages.each do |pkg|
@@ -46,12 +46,10 @@ secrets = Chef::DataBagItem.load('secrets', 'logstash')
 logstash_key = Base64.decode64(secrets['key'])
 file '/tmp/logstash.key' do
   content logstash_key
-  sensitive true
 end
 logstash_crt = Base64.decode64(secrets['certificate'])
 file '/tmp/logstash.crt' do
   content logstash_crt
-  sensitive true
 end
 
 # install ELASTICSEARCH 1.7.1 instead of the default of 1.7.0
@@ -62,12 +60,6 @@ elasticsearch 'default' do
   checksum '86a0c20eea6ef55b14345bff5adf896e6332437b19180c4582a346394abde019'
   url 'https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.1.tar.gz'
 end
-
-# install elasticsearch_plugin (license)
-# elasticsearch_plugin 'license' do
-#   version '1.7.1'
-# end
-
 # We'll go ahead and ship elasticsearch logs, too
 logs <<
   {
@@ -105,15 +97,6 @@ logs <<
       'chef_env' => 'prod'
     }
   }
-
-logs.each do |conf|
-  conf['paths'].each do |log|
-    file log do
-      group 'logstash'
-      ignore_failure true
-    end
-  end
-end
 
 ## Install the forwarder and configure it to ship everything in logs up to this point.
 logstash_forwarder 'default' do

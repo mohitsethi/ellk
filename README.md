@@ -3,12 +3,12 @@ ELLK Cookbook
 
 [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
 
-[![Cookbook Version](https://img.shields.io/cookbook/v/ELLk.svg)](https://supermarket.chef.io/cookbooks/ellk)  [![Build 
-Status](https://drone.dearing.tech/api/badges/dearing/ellk/status.svg)](https://drone.dearing.tech/dearing/ellk)
+[![Cookbook Version](https://img.shields.io/cookbook/v/ELLk.svg)](https://supermarket.chef.io/cookbooks/ellk)
+[![Circle CI](https://circleci.com/gh/dearing/ellk/tree/master.svg?style=svg)](https://circleci.com/gh/dearing/ellk/tree/master)
 
 Hack friendly, Chef library to manage Elasticsearch, Logstash, Logstash-forwarder and Kibana
 
-*note: expects consumer to install java, handle certs and manipulate firewalls*
+*note: expects consumer to install java and handle certs and manipulate firewalls*
 
 Requirements
 ------------
@@ -22,15 +22,11 @@ Published
 - [releases]
 - [supermarket]
 
-A note on RUNIT
----------------
-Runit has gone through some design changes and the releases between 1.5.18 and 1.7 would create inconsistent responses when polling the state of a service.  In order to prevent this from breaking integration tests and create false problems for consumers, I pinned this cookbook to v1.5.18. Since v0.3.5 I have released this pinning and advice the consumer to decide which version of runit they want to run.
-
 About
 ------------
 This cookbook provides a modern Chef approach to installing and configuring the four [elastic] products that make up an ELK stack with the company's binary artifacts.  Using [ark] to fetch those remote artifacts and [runit] to handle the service allows us to side step the nuanced vulgarity of competing package managers, driving down the complexity of this cookbook.  This means faster updates, less angles for bugs and a guard against feature creep.  So the flexibity is that this library won't be upset if you don't use the whole stack or any combination within.  Call what you need, configure how you like and get back to [#chefops], your way.
 
-The opinion of this design is then that remote systems get a shipper in the form of [logstash-forwarder] that does nothing but harvest logs and forward them to logstash endpoints.  It is a Go static binary so there is no fuss for the host OS.  Simply unpack, configure and run.  The `logstash-forwarder` resource is designed to accept an array of hashes that is eventually converted to the json configuration for the program.  This allows you to simply call it in a scope of a node for its logs.
+The opinion of this design is then that remote systems get a shipper in the form of [logstash-forwarder] that does nothing but harvest logs and forward them to logstash endpoints.  It is a Go static binary so there is no fuss for the host OS.  Simply unpack, configure and run.  The `logstash-forwarder` resource is designed to accept a hash that is eventually converted to the json configuration for the program.  This allows you to simply call it in a scope of a node for its logs.
 
 ```ruby
 ## install LOGSTASH-FORWARDER and configure to watch various logs
@@ -39,23 +35,26 @@ logstash_forwarder 'default' do
   logstash_servers ['localhost:5043']
   files [{
   'paths' => ['/var/log/messages', '/var/log/*log'],
-    'fields' => {
-      'type' => 'syslog',
-      'chef_node' => node.name,
-      'chef_env' => node.chef_environment
+    'fields' => { 
+      'type' => 'syslog', 
+      'chef_node' => node.name, 
+      'chef_env' => node.chef_environment 
     }
   }]
 end
 ```
-The clever will note that this allows one to build up an array that finally can be passed as an attribute for [logstash-forwarder] to be configured by for harvesting.
+The clever will note that this allows one to build up a array that finally can be passed as an attribute for [logstash-forwarder] to be configured by for harvesting.
 
-```ruby
+```
 logstash_forwarder 'default' do
   crt_location '/tmp/logstash.crt'
   logstash_servers ['localhost:5043']
   files node['my_fancy_log_collection']
 end
 ```
+
+>The power is yours!
+>> Captain Planet
 
 Should you want them, standing up logstash and elasticsearch is just as easy with everything exposed to override defaults:
 
@@ -124,21 +123,6 @@ Default installed versions
 [kibana] | 4.1.1
 
 You can override any of these by passing the url for the zip/tar package, a checksum (sha256) and a version to tag it by. See the resource files in the libraries folder for the accepted attributes and [ellktest] for examples and flexibility..
-
-Thor
-------------
-```
-Commands:
-  thor utils:create_bag      # create a Chef data bag of cert and key
-  thor utils:create_cert     # create a certificate with a key
-  thor utils:create_key      # create a RSA 2048 key
-  thor utils:help [COMMAND]  # Describe available commands or one specific command
-  thor utils:quick_bag       # executes create_cert, create_key & create_bag with defaults
-
-Options:
-  [--fields=FIELDS]
-                     # Default: CN=localhost
-```
 
 TODO & Help Wanted
 ------------

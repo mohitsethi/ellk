@@ -23,6 +23,7 @@ kibana_index: <%= @options['kibana_index'] %>
 # users will still need to authenticate with Elasticsearch (which is proxied thorugh
 # the Kibana server)
 <%= "kibana_elasticsearch_username: #{ @options['kibana_elasticsearch_username']}" if @options['kibana_elasticsearch_username'] -%>
+
 <%= "kibana_elasticsearch_password: #{ @options['kibana_elasticsearch_password']}" if @options['kibana_elasticsearch_password'] %>
 
 # If your Elasticsearch requires client certificate and key
