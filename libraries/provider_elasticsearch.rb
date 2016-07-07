@@ -55,7 +55,9 @@ class Chef
             'cluster_name' => new_resource.name,
             'datadir' => new_resource.datadir,
             'enable_discovery' => new_resource.enable_discovery,
-            'cluster_nodes' => new_resource.nodes
+            'cluster_nodes' => new_resource.nodes,
+            'is_master' => new_resource.is_master,
+            'is_data' => new_resource.is_data
           }.merge(new_resource.conf_options)
           notifies :restart, "runit_service[#{service_name}]", :delayed
         end

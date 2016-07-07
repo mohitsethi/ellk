@@ -30,6 +30,10 @@ class Chef
       attribute :runit_args, kind_of: Hash, default: {}
       attribute :runit_options, kind_of: Hash, default: {}
       attribute :runit_env, kind_of: Hash, default: {}
+
+      # Node role
+      attribute :is_master, kind_of: [TrueClass, FalseClass], default: false
+      attribute :is_data, kind_of: [TrueClass, FalseClass], default: true
     end
   end
 end

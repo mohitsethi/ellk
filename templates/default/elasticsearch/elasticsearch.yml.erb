@@ -49,10 +49,17 @@ cluster.name: <%= @options['cluster_name'] %>
 # Allow this node to be eligible as a master node (enabled by default):
 #
 #node.master: true
+<% if @options['is_master'].defined? %>
+node.master: <%= @options['is_master'] %>
+<% end %>
+
 #
 # Allow this node to store data (enabled by default):
 #
 #node.data: true
+<% if @options['is_data'].defined? %>
+node.data: <%= @options['is_data'] %>
+<% end %>
 
 # You can exploit these settings to design advanced cluster topologies.
 #
